@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+<div class="flex-c container_text" style="max-width: 900px;">
+        <h2 class="bold center" style="margin-bottom: 30px;">About Flow-Graph</h2>
+        
+        <div style="margin-bottom: 25px;">
+            <p>
+                Flow-Graph is a data visualization web-app intended for analyzing flow 
+                cytometry data exported from FlowJo. 
+                Its data preprocessing tools target FlowJo-specific 
+                formatting challenges, but it is flexible enough to accommodate any 
+                CSV-formatted dataset containing categorical and continuous variables.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <h4 class="bold">Key Features</h4>
+            <ul style="line-height: 1.8;">
+                <li><strong>CSV File Upload:</strong> Simple drag-and-drop or file selection interface</li>
+                <li><strong>Data Processing:</strong> Split sample identifiers into separate columns and automatically clean FlowJo export formatting</li>
+                <li><strong>Interactive Visualization:</strong> Create boxplots and bar charts with customizable grouping</li>
+                <li><strong>Faceted Graphs:</strong> Compare across multiple experimental conditions</li>
+                <li><strong>Session-Based:</strong> Data is processed in isolated sessions for privacy</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <h4 class="bold">Technology Stack</h4>
+            <p>
+                Flow-Graph is built with Python Flask backend, using pandas for data manipulation, 
+                plotnine (Python implementation of ggplot2) for visualization, and SQLite for 
+                temporary data storage. The frontend uses vanilla JavaScript with some Bootstrap styling.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+    <h4 class="bold">Source Code</h4>
+    <p>
+        View the code on GitHub: 
+        <a href="https://github.com/bio-chel/flow-graph" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           style="color: #2196F3; text-decoration: underline; font-weight: bold;">
+            github.com/bio-chel/flow-graph
+        </a>
+        </p>
+    </div>
+
+        <div style="margin-bottom: 25px;">
+            <h4 class="bold">Privacy & Data Retention</h4>
+            <p>
+                Your uploaded data is stored temporarily in an isolated session database. Data is 
+                automatically deleted after 2 hours of inactivity or whenever you upload new data during the same session. You can also manually delete your 
+                data at any time using the "Delete Data" option in the navigation bar.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <h4 class="bold">Feedback & Issues</h4>
+            <p>
+                This is a personal project under active development. If you encounter problems, bugs or have 
+                suggestions for improvements, please reach out at compbio.chel@gmail.com
+            </p>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd;">
+            <p class="center" style="color: #666; font-size: 14px;">
+                Flow-Graph 2024 | Created by compbio.chel@gmail.com | A tool for flow cytometry data visualization
+            </p>
+        </div>
+    </div>
+
+{% endblock %}

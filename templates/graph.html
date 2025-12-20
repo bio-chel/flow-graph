@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+ <div class="flex-r p02">
+        
+        <div class="flex-sidebar" style="width: 300px;">
+
+            <span class="bold center p05">Graph Options</span>
+
+            <form class="p05" action="/graph" method="POST">
+
+            <div>
+                <label for="X_Select" class="bold p05 p08-L">X Axis</label>
+                <select id="X_Select" name="X_Select" class="form-control">
+                    <option value="">--</option>
+                    {% for col in session.get('melt_cols', []) %}
+                    <option value="{{ col }}">{{ col }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="Xfacet_Select" class="bold p05 p08-L">X Facet</label>
+                <select id="Xfacet_Select" name="Xfacet_Select" class="form-control" >
+                    <option value="">--</option>
+                    {% for col in session.get('melt_cols', []) %}
+                    <option value="{{ col }}">{{ col }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+             <div>
+                <label for="Yfacet_Select" class="bold p05 p08-L">Y Facet</label>
+                <select id="Yfacet_Select" name="Yfacet_Select" class="form-control" >
+                    <option value="">--</option>
+                    {% for col in session.get('melt_cols', []) %}
+                    <option value="{{ col }}">{{ col }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="group_Select" class="bold p05 p08-L">Group by</label>
+                <select id="group_Select" name="group_Select" class="form-control" >
+                    <option value="">--</option>
+                    {% for col in session.get('melt_cols', []) %}
+                    <option value="{{ col }}">{{ col }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Two Button Toggle -->
+            <div class="center" style="margin-top: 25px;">
+                <div class="toggle-buttons">
+                    <input type="radio" name="Graph_type" id="toggle_enabled" value="Boxplot" checked>
+                    <label for="toggle_enabled">Boxplot</label>
+                    <input type="radio" name="Graph_type" id="toggle_disabled" value="Bar">
+                    <label for="toggle_disabled">Bar</label>
+                 </div>
+            </div>
+            <br>
+            <hr>
+            <div class="center">
+                <button type="submit">Plot Data</button>
+            </div>
+            </form>
+
+        </div> 
+
+        <div class="flex-c p02">
+
+            <div style="width:25px;">
+
+            </div>
+            <div>
+                <span class="error">
+                {{ error }}
+                </span>
+            </div>
+            <div>
+                <div class= "p08-L" style="padding-top: 30px;">
+                {{ table|safe }}
+                {{ fig|safe }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endblock %}

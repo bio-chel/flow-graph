@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+    <div class="flex-r p02">
+        
+        <div class="flex-sidebar p08-L">
+           
+            <div>
+                <p class="bold p05">Select File</p>
+                
+                <form method="POST" enctype="multipart/form-data" action="/upload">
+                    <input type="file" name="DataFile" id="DataFile" accept=".csv">
+                    <hr>
+                    <div>
+                        <p class="bold p05">Process Columns</p>
+                        <input type="checkbox" name="split_ids" id="split_ids">
+                        <label for="split_ids" title="Separate ID elements into columns">Split ID</label>
+                    
+                        <div class="flex" id="splitId_options" style="display: none;">
+                            <div>
+                                <span class="bold">Enter ID Separator Symbol </span>
+                                <input type="text" name="splitID_separator" placeholder="e.g: _"
+                                    value="{{ user_input }}">
+                            </div>
+
+                            <span class="bold">Enter New Column Names</span>
+                            <input type="text" name="splitID_columns" placeholder="Sample, Treatment, Timepoint"
+                                value="{{ user_input }}">
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        <input type="checkbox" name="flowjo" id="flowjo">
+                        <label for="split_ids">FlowJo Column Name Clean-up</label>
+                        <div id="FlowJo_option" class="p02" style="display: none;">
+                            <span class="bold">Parent Gates to Remove</span>
+                            <input type="number" name="prefix_remove" placeholder="3"
+                                value="{{ user_input }}">
+                        </div>
+                    </div>
+                    <hr>
+                    <input type="submit" value="Upload">
+                </form>
+                <br><br>
+                <div class="error center">
+                    {{ error }}
+                </div>
+                
+            </div>
+        </div>
+
+            <div class="flex-c p02" style="min-width:calc(100vw - 350px);">
+
+                <div>
+                    <div class="p02">
+                        <p class="center bold"> Data Upload and Selection </p>
+                        <p> Use the sidebar to select a .csv file. If needed, split the row IDs [column 1] into separate data columns and/or process column names to remove FlowJo prefixes.</p>
+                        <p> After uploading the file, you'll see the processed results and can then select the columns of interest.</p>
+                    </div>
+                 </div>
+
+                <div>
+                    <p class="bold p08-L"> {{ dat_title }}</p>
+                    <div class="of-auto p08-L">
+                        {{ dat|safe }}
+                    </div>
+
+               
+                </div>
+                <hr>
+                <div class="flex-c minW-0" style="min-height: 0;">   
+                    <span class="bold p02">Select Categorical and Continuous Variables</span>
+                    <section class="container minW-0" style="min-height: 0;  flex: 1 0 auto; flex-shrink: 1;">
+                    <div>
+                        <div class="label">Categorical</div>
+                        <select id="leftValues_Cat" size="7" multiple></select>
+                    </div>
+                    <div>
+                        <input type="button" id="btnLeft_Cat" value="&lt;&lt;" />
+                        <input type="button" id="btnRight" value="&gt;&gt;" />
+                    </div>
+                            <div>
+                                <div class="label" style="visibility: hidden;">Available</div>
+                                <select id="centerValues" size="7" multiple>
+                                    {% for item in colnames %}
+                                    <option value="{{ item }}" title="{{ item }}">{{ item }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <input type="button" id="btnLeft" value="&lt;&lt;" />
+                                <input type="button" id="btnRight_Con" value="&gt;&gt;" />
+                            </div>
+                            <div>
+                                <div class="label">Continuous</div>
+                                <select id="rightValues_Con" size="7" multiple></select>
+                            </div>
+                        </section>
+                        <div class="p02">
+                            <button type="submit" class="bold" id="columns">Filter Data</button>
+                        </div>
+                    </div>
+                
+            
+                <hr>
+
+            </div>
+
+    </div>
+
+{% endblock %}

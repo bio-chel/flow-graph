@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <div class="flex-c container_text" style="max-width: 1100px;">
+        <h2 class="bold center" style="margin-bottom: 30px;">Usage Guide</h2>
+
+        <div style="margin-bottom: 30px; padding: 20px; background-color: #e3f2fd; border-left: 5px solid #1976D2;">
+        <p style="margin: 0 0 10px 0; font-size: 16px;">
+            <strong>Note:</strong> Flow-Graph was built with FlowJo users in mind. If you export your 
+            flow cytometry data from FlowJo as a CSV file, this tool is designed to handle its specific 
+            formatting quirks—particularly the long hierarchical gate names, sample name column, 
+            and the summary statistics rows that FlowJo includes at the bottom of exports.
+        </p>
+        <p style="margin: 0; font-size: 16px;">
+            However, you can skip all pre-processing options and it should still be applicable to most data.
+        </p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h3 class="bold" style="color: #333; border-bottom: 2px solid #5a5a5a; padding-bottom: 10px;">
+                Data Upload
+            </h3>
+            <p style="margin-top: 15px;">
+                Navigate to the <strong>Start</strong> page and select a CSV file containing your data using the file browser.
+            </p>
+            <ul style="line-height: 1.8; margin-top: 10px;">
+                <li><strong>Supported Format:</strong> .csv files only (comma-separated values)</li>
+                <li><strong>Data Structure:</strong> First column must contain sample identifiers, 
+                    followed by other categorical/continuous variable columns</li>
+                <li><strong>File Size:</strong> Maximum 10MB</li>
+                
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h3 class="bold" style="color: #333; border-bottom: 2px solid #5a5a5a; padding-bottom: 10px;">
+                Data Processing (Optional)
+            </h3>
+            
+            <h4 class="bold" style="margin-top: 20px;">Split ID Option</h4>
+            <p>
+                If your sample identifiers contain multiple pieces of information separated by a delimiter 
+                (e.g., "Sample1_Treatment_Day0"), you can split them into separate columns:
+            </p>
+            <ol style="line-height: 1.8; margin-top: 10px;">
+                <li>Check the <strong>"Split ID"</strong> checkbox</li>
+                <li><strong>Enter ID Separator Symbol:</strong> Type the character that separates your 
+                    ID components (e.g., "_" or "-")</li>
+                <li><strong>Enter New Column Names:</strong> Provide comma-separated names for the new 
+                    columns (e.g., "Sample, Treatment, Timepoint")</li>
+            </ol>
+            <p style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-left: 4px solid #5a5a5a;">
+                <strong>Example:</strong> If your ID is "A1_Control_0h" and you use "_" as separator with 
+                columns "Sample, Treatment, Time", it will create three new columns with values "A1", "Control", and "0h".
+            </p>
+
+            <h4 class="bold" style="margin-top: 25px;">FlowJo Column Name Clean-up</h4>
+            <p>
+                FlowJo exports often include hierarchical gate names as prefixes and a long suffix. This option cleans up the suffix and removes prefixes:
+            </p>
+            <ol style="line-height: 1.8; margin-top: 10px;">
+                <li>Check the <strong>"FlowJo Column Name Clean-up"</strong> checkbox</li>
+                <li><strong>Parent Gates to Remove:</strong> Enter the number of parent gate levels to 
+                    remove from column names (accepts 0 if you only wish to clean the suffix)</li>
+            </ol>
+            <p style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-left: 4px solid #5a5a5a;">
+                <strong>Example:</strong> "Lymphocytes/Live/CD3+/CD4+ | Freq. of Live (%)" becomes "CD4+ | Live (%)" if you remove 3+ parent gates. 
+            </p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h3 class="bold" style="color: #333; border-bottom: 2px solid #5a5a5a; padding-bottom: 10px;">
+                Select Variables
+            </h3>
+            <p style="margin-top: 15px;">
+                After uploading, you'll see a preview of your data. Now classify your columns of interest:
+            </p>
+            <ol style="line-height: 1.8; margin-top: 10px;">
+                <li><strong>Categorical Variables:</strong> Use the arrows to move columns that represent 
+                    categories (e.g., Treatment, Timepoint, Genotype) to the left box</li>
+                <li><strong>Continuous Variables:</strong> Move columns with numerical measurements 
+                    (e.g., percentages, MFI) to the right box</li>
+                <li>Select multiple columns by holding Ctrl (Windows) or Cmd (Mac)</li>
+                <li>Click the <strong>"Filter Data"</strong> button when ready</li>
+            </ol>
+            <p style="margin-top: 10px; padding: 10px; background-color: #fff3cd; border-left: 4px solid #ffc107;">
+                <strong>Note:</strong> You must select at least one categorical and one continuous variable 
+                to proceed.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h3 class="bold" style="color: #333; border-bottom: 2px solid #5a5a5a; padding-bottom: 10px;">
+                Create Visualizations
+            </h3>
+            <p style="margin-top: 15px;">
+                The plotting page offers multiple customization options:
+            </p>
+
+            <h4 class="bold" style="margin-top: 20px;">Graph Options Panel</h4>
+            <ul style="line-height: 1.8; margin-top: 10px;">
+                <li><strong>X Axis:</strong> Select which variable to display on the X-axis 
+                    (defaults to all continuous variables)</li>
+                    
+                <li><strong>Faceting:</strong> Faceting creates a grid of sub-plots, each showing a subset of your data</li>
+                <p style="margin-top: 5px; margin-left: 45px;">
+                <strong>X Facet:</strong> Create a horizontal grid of subplots based on a categorical variable 
+                </p>
+                <p style="margin-top: -10px; margin-left: 45px;">
+                    <strong>Y Facet:</strong> Create a vertical grid of subplots based on a categorical variable 
+                </p>
+                <p style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-left: 4px solid #5a5a5a;">
+                <strong>Example:</strong> X Facet by "Timepoint" and Y Facet by "Treatment" creates 
+                separate plots for each Timepoint-Treatment combination.
+                </p>
+                <li><strong>Group by:</strong> Color-code data points by a categorical variable</li>
+                <li><strong>Graph Type:</strong> Toggle between Boxplot (default) and Bar chart</li>
+            </ul>
+            <p style="margin-top: 5px; margin-left: 45px;">
+                <strong>Boxplot:</strong> Shows the distribution of your data with individual data points overlaid
+            </p>
+            <p style="margin-top: -5px; margin-left: 45px;">
+                <strong>Bar Chart:</strong> Displays the value for each single data point, must be customized to avoid overlap
+            </p>
+
+            
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h3 class="bold" style="color: #333; border-bottom: 2px solid #5a5a5a; padding-bottom: 10px;">
+                Data Management
+            </h3>
+            <p style="margin-top: 15px;">
+                <strong>Data Deletion:</strong> Use the "Delete Data" link in the navigation bar to manually 
+                remove your uploaded and processed data from the server at any time. 
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Automatic Cleanup:</strong> All data is automatically deleted after 2 hours of 
+                inactivity for privacy and storage management.
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Starting Over:</strong> Uploading a new file automatically replaces your previously uploaded
+                data.
+            </p>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background-color: #fff3cd; border-left: 4px solid #ffc107;">
+            <h4 class="bold">Troubleshooting</h4>
+            <ul style="line-height: 1.8; margin-top: 10px;">
+                <li><strong>Data frame looks wrong:</strong> Ensure your CSV file is properly formatted. The first row must contain column names and the first column an identifier or categorical variable.</li>
+                <li><strong>"No file selected":</strong> Make sure you've chosen a file before clicking Upload</li>
+                <li><strong>"File must be a CSV":</strong> Only .csv files are supported - save Excel files as CSV first</li>
+                <li><strong>"Please select at least one...":</strong> You need both categorical and continuous variables, at least one categorical variable is needed even if it will not be used for plotting.</li>
+                <li><strong>Graph not appearing:</strong> Check that you've clicked Submit after selecting graph options</li>
+                <li><strong>Columns not moving:</strong> Make sure JavaScript is enabled in your browser</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd; text-align: center;">
+            <p style="color: #666;">
+                Ready to start? Head to the <a href="/" style="color: #2196F3; text-decoration: underline;">Start</a> page!
+            </p>
+        </div>
+    </div>
+
+
+
+{% endblock %}

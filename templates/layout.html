@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="static/styles.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script type="text/javascript" src="static/java.js"></script>
+        <title>Flow-Graph</title>
+    </head>
+
+    <body>
+        <nav class="top-bar border-bottom bd-navbar bg-dark">
+                
+            <div class="navbar-nav-scroll">
+                <div class="navbar-nav bd-navbar-nav flex-row p05">
+                    <a class="nav-link p02 bold" href="/"  style="padding-right: 35px; padding-left: 25px;">Flow-Graph</a>
+                    <a class="nav-link p02 p15px-R" href="/about">About</a>
+                    <a class="nav-link p02 p15px-R" href="/usage">Usage</a>
+                    <a class="nav-link p02 p15px-R" href="/">Start</a>
+                    {% if session['table_name'] is defined %}
+                    <a class="nav-link p02" href="/delete">Delete Data</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </nav>
+        
+        <main class="flex-r">
+
+            {% block main %}{% endblock %}
+
+        </main>
+
+    </body>
