@@ -9,7 +9,7 @@ except ImportError:
     )
 
 # =============================================================================
-# SESSION/TABLE CLEANUP INTERVAL (hours)
+# SESSION CLEANUP INTERVAL (hours)
 # =============================================================================
 CLEANUP_INTERVAL = 2
   

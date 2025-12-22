@@ -34,7 +34,7 @@ app.config['SESSION_COOKIE_SECURE'] = False # Set True if using HTTPS
 
 # Global variables
 DB_PATH = config.DATABASE_PATH
-CLEANUP_INTERVAL_MINUTES = config.CLEANUP_INTERVAL * 60
+CLEANUP_INTERVAL_MINUTES = 10
 last_cleanup_time = None  
 cleanup_lock = threading.Lock()  # Prevents simultaneous cleanup
 
