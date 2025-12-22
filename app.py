@@ -3,7 +3,7 @@ from helpers import (
     remove_colname_upto_symbol, table_timestamp,
     get_discrete_cmap_colors, init_db, check_session_tables
 )                    
-from flask import Flask, render_template, redirect, request, jsonify, session, Response
+from flask import Flask, render_template, redirect, request, jsonify, session
 import pandas as pd
 from io import StringIO
 import sqlite3
@@ -74,10 +74,6 @@ def cleanup_expired_tables():
     
     # Make session permanent so it uses the PERMANENT_SESSION_LIFETIME config
     session.permanent = True
-    
-    # Update last activity time for active sessions
-    if 'table_name' in session or 'filtered_table' in session:
-        session['last_active'] = datetime.now(timezone.utc).isoformat()
 
     global last_cleanup_time
     now = datetime.now(timezone.utc).isoformat()
@@ -136,6 +132,7 @@ def cleanup_expired_tables():
 
 @app.route('/')
 def start():
+    session['last_active'] = datetime.now(timezone.utc).isoformat()
     return render_template("start.html")
 
 
@@ -143,6 +140,7 @@ def start():
 def file():
     
     if request.method == 'POST':
+        session['last_active'] = datetime.now(timezone.utc).isoformat()
 
         # Validate file was uploaded
         try:
@@ -348,6 +346,7 @@ def cols():
 def graph():
 
     if request.method == 'GET':
+        session['last_active'] = datetime.now(timezone.utc).isoformat()
 
         ##Check session tables
         if not check_session_tables():
