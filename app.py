@@ -1,14 +1,14 @@
 from helpers import (
     drop_table, wrap_labels, plotnine_to_svgString_dynasize,
     remove_colname_upto_symbol, table_timestamp,
-    get_discrete_cmap_colors, init_db
+    get_discrete_cmap_colors, init_db, check_session_tables
 )                    
-from flask import Flask, render_template, redirect, request, jsonify, session
+from flask import Flask, render_template, redirect, request, jsonify, session, Response
 import pandas as pd
 from io import StringIO
 import sqlite3
 import uuid
-from datetime import timezone, datetime
+from datetime import timezone, datetime, timedelta
 import matplotlib
 matplotlib.use("Agg")
 from plotnine import (
@@ -28,18 +28,56 @@ import config
 # Configure application
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
-DB_PATH = config.DATABASE_PATH
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=config.CLEANUP_INTERVAL)
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False # Set True if using HTTPS 
 
-# Timed cleanup global variables
+# Global variables
+DB_PATH = config.DATABASE_PATH
+CLEANUP_INTERVAL_MINUTES = config.CLEANUP_INTERVAL * 60
 last_cleanup_time = None  
 cleanup_lock = threading.Lock()  # Prevents simultaneous cleanup
-CLEANUP_INTERVAL_MINUTES = 20  
+
 
 # Initialize table_lifetime if not exists
 init_db()
 
 @app.before_request
 def cleanup_expired_tables():
+
+    ## Check session timeout and clear if expired
+    if 'last_active' in session:
+        try:
+            last_active = datetime.fromisoformat(session['last_active'])
+            now = datetime.now(timezone.utc)
+            timeout_duration = timedelta(hours=config.CLEANUP_INTERVAL) 
+            
+            # If session has been inactive for too long
+            if now - last_active > timeout_duration:
+                # Get table names before clearing session
+                old_table = session.get("table_name")
+                old_filtered = session.get("filtered_table")
+                
+                # Clear session
+                session.clear()
+                
+                # Clean up user's tables immediately
+                drop_table(old_table)
+                drop_table(old_filtered)
+                
+                # Don't continue with global cleanup on this request
+                return
+        except (ValueError, TypeError):
+            # If last_active is malformed, clear session
+            session.clear()
+            return
+    
+    # Make session permanent so it uses the PERMANENT_SESSION_LIFETIME config
+    session.permanent = True
+    
+    # Update last activity time for active sessions
+    if 'table_name' in session or 'filtered_table' in session:
+        session['last_active'] = datetime.now(timezone.utc).isoformat()
 
     global last_cleanup_time
     now = datetime.now(timezone.utc).isoformat()
@@ -227,6 +265,7 @@ def file():
                 error=f"Database error: {str(e)}")
 
         # Store metadata in the session
+        session.permanent = True
         session["table_name"] = table_name
         session["last_active"] = datetime.now(timezone.utc).isoformat()
 
@@ -289,6 +328,7 @@ def cols():
     table_timestamp(filtered_table)
     
     # Store filtered table and column info in session
+    session.permanent = True
     session["filtered_table"] = filtered_table
     session["categorical_cols"] = categorical
     session["continuous_cols"] = continuous
@@ -306,27 +346,36 @@ def cols():
 
 @app.route('/graph', methods=["GET", "POST"])
 def graph():
+
     if request.method == 'GET':
 
-        filtered_table = session.get("filtered_table")
-        if not filtered_table:
-            return render_template("start.html", error="No filtered data available. Please upload and process data first.")
-
+        ##Check session tables
+        if not check_session_tables():
+            return render_template("start.html", 
+                                 error="Your session has expired. Please upload your data again.")
+        
         try:
             with sqlite3.connect(DB_PATH) as conn:
+                filtered_table = session.get("filtered_table")
                 df = pd.read_sql(f"SELECT * FROM {filtered_table}", con=conn)
         except sqlite3.Error as e:
-            return render_template("start.html", error=f"Error loading data: {str(e)}")
+            return render_template("start.html", error=f"Error reading data: {str(e)}")
         
         return render_template("graph.html", table=df.to_html(index=False))
 
     #POST request, graph generation
     else:
 
-        # Clear previous selections from session
+        ##Check session tables
+        if not check_session_tables():
+            return render_template("start.html", 
+                                 error="Your session has expired. Please upload your data again.")
+
+        # Clear previous session data
         session.pop('xaxis', None)
         session.pop('frows', None)
         session.pop('fcols', None)
+
         # Get new selections
         xaxis = request.form.get('X_Select') or "Vars"
         frows = request.form.get('Yfacet_Select') or "."
@@ -345,8 +394,9 @@ def graph():
         facet = f"{frows}~{fcols}"
 
         # Generate colors
+        palette = request.form.get('palette')
         n_groups = df[group].nunique()
-        palette_colors = get_discrete_cmap_colors(n_groups, cmap=config.PALETTE)
+        palette_colors = get_discrete_cmap_colors(n_groups, cmap=palette)
 
         try:
             custom_theme = theme_classic() + theme(
@@ -369,12 +419,12 @@ def graph():
 
             if type == 'Boxplot':
                 graph = (ggplot(df, aes(x=xaxis, y="value", fill=group)) + 
-                        geom_jitter(position=position_jitterdodge(jitter_width=0.1, dodge_width=0.6)) + 
-                        geom_boxplot(width=0.4, alpha=0.12, color='black',
+                        geom_jitter(size=1.75, position=position_jitterdodge(jitter_width=0.1, dodge_width=0.6)) + 
+                        geom_boxplot(width=0.4, alpha=0.2, color='black',
                                     position=position_dodge(width=0.6), 
                                     show_legend=False, outlier_shape='') + 
                         scale_x_discrete(limits=df[xaxis].unique(), labels=wrap_labels) + 
-                        guides(fill=guide_legend(override_aes={'size': 3})) +
+                        guides(fill=guide_legend(override_aes={'size': 4})) +
                         scale_fill_manual(values=palette_colors) +
                         custom_theme)
             else:
@@ -382,7 +432,7 @@ def graph():
                         geom_col(width=0.6, color='black',
                                     position=position_dodge(width=0.8)) + 
                         scale_x_discrete(limits=df[xaxis].unique(),labels=wrap_labels) + 
-                        guides(fill=guide_legend(override_aes={'size': 3})) +
+                        guides(fill=guide_legend(override_aes={'size': 0.5})) +
                         scale_fill_manual(values=palette_colors) +
                         custom_theme)
 
@@ -452,6 +502,8 @@ def delete():
     else:
         filttable_delete_message = "No filtered data could be found in this session."
 
+    # Clear all session data
+    session.clear()
 
     return render_template("text.html", table_delete_message=table_delete_message, filttable_delete_message=filttable_delete_message) 
 
@@ -462,3 +514,8 @@ def usage():
 @app.route('/about')
 def about():
     return render_template("about.html")
+
+@app.route('/download_plot')
+def download_plot():
+    
+    return

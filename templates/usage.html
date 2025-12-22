@@ -56,12 +56,12 @@
 
             <h4 class="bold" style="margin-top: 25px;">FlowJo Column Name Clean-up</h4>
             <p>
-                FlowJo exports often include hierarchical gate names as prefixes and a long suffix. This option cleans up the suffix and removes prefixes:
+                FlowJo exports often include hierarchical gate names as prefixes and a long suffix. This option cleans up the suffix, the summary statistics row at the end of the table, and removes prefixes:
             </p>
             <ol style="line-height: 1.8; margin-top: 10px;">
                 <li>Check the <strong>"FlowJo Column Name Clean-up"</strong> checkbox</li>
                 <li><strong>Parent Gates to Remove:</strong> Enter the number of parent gate levels to 
-                    remove from column names (accepts 0 if you only wish to clean the suffix)</li>
+                    remove from column names (accepts 0 if you only wish to clean the suffix and Mean/SD rows)</li>
             </ol>
             <p style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-left: 4px solid #5a5a5a;">
                 <strong>Example:</strong> "Lymphocytes/Live/CD3+/CD4+ | Freq. of Live (%)" becomes "CD4+ | Live (%)" if you remove 3+ parent gates. 

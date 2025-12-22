@@ -1,4 +1,3 @@
-
 import sqlite3
 from io import StringIO
 import re
@@ -8,6 +7,7 @@ import textwrap
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 import config
+from flask import session
 
 DB_PATH = config.DATABASE_PATH
 
@@ -23,6 +23,12 @@ def init_db():
             """)
     except sqlite3.Error as e:
         return print(f"Database error: {str(e)}")
+    
+def check_session_tables():
+    """Check if current session has valid tables"""
+    if 'table_name' not in session and 'filtered_table' not in session:
+        return False
+    return True
 
 def drop_table(table_name):
     if not table_name:
@@ -101,7 +107,7 @@ def table_timestamp(table_id):
         )
         conn.commit()
 
-def get_discrete_cmap_colors(n_colors, cmap=config.PALETTE):
+def get_discrete_cmap_colors(n_colors, cmap):
     """
     Get n discrete colors from a matplotlib colormap
     

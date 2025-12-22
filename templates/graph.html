@@ -50,6 +50,23 @@
                 </select>
             </div>
 
+            <div>
+                <label for="palette" class="bold p05 p08-L">Color Palette</label>
+                <select id="palette" name="palette" class="form-control" >
+                    <option value="bone">Bone</option>
+                    <option value="cubehelix">Cubehelix</option>
+                    <option value="GnBu">GnBu</option>
+                    <option value="Grays">Grays</option>
+                    <option value="Pastel1">Pastel</option>
+                    <option value="PuBu">PuBu</option>
+                    <option value="PuBuGn">PuBuGn</option>
+                    <option value="Spectral">Spectral</option>
+                    <option value="terrain">Terrain</option>
+                    <option value="tab20b">20B</option>
+                    <option value="tab20c">20C</option>
+                </select>
+            </div>
+
             <!-- Two Button Toggle -->
             <div class="center" style="margin-top: 25px;">
                 <div class="toggle-buttons">
@@ -78,6 +95,7 @@
                 {{ error }}
                 </span>
             </div>
+
             <div>
                 <div class= "p08-L" style="padding-top: 30px;">
                 {{ table|safe }}

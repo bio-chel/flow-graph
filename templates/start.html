@@ -3,12 +3,12 @@
 {% block main %}
 
     <div class="flex-r p02">
-        
+
         <div class="flex-sidebar p08-L">
-           
-            <div>
+
+            <div style="margin-top:25px;">
                 <p class="bold p05">Select File</p>
-                
+
                 <form method="POST" enctype="multipart/form-data" action="/upload">
                     <input type="file" name="DataFile" id="DataFile" accept=".csv">
                     <hr>
@@ -16,7 +16,7 @@
                         <p class="bold p05">Process Columns</p>
                         <input type="checkbox" name="split_ids" id="split_ids">
                         <label for="split_ids" title="Separate ID elements into columns">Split ID</label>
-                    
+
                         <div class="flex" id="splitId_options" style="display: none;">
                             <div>
                                 <span class="bold">Enter ID Separator Symbol </span>
@@ -46,15 +46,16 @@
                 <div class="error center">
                     {{ error }}
                 </div>
-                
+
             </div>
         </div>
 
-            <div class="flex-c p02" style="min-width:calc(100vw - 350px);">
+            <div class="flex-c p02" style="min-width:calc(100vw - 400px);">
+                <div class="side-borders">
 
                 <div>
                     <div class="p02">
-                        <p class="center bold"> Data Upload and Selection </p>
+                        <h3 class="bold"> Data Upload and Selection </h3>
                         <p> Use the sidebar to select a .csv file. If needed, split the row IDs [column 1] into separate data columns and/or process column names to remove FlowJo prefixes.</p>
                         <p> After uploading the file, you'll see the processed results and can then select the columns of interest.</p>
                     </div>
@@ -66,10 +67,11 @@
                         {{ dat|safe }}
                     </div>
 
-               
+
                 </div>
+                {% if session['table_name'] is defined %}
                 <hr>
-                <div class="flex-c minW-0" style="min-height: 0;">   
+                <div class="flex-c minW-0" style="min-height: 0;">
                     <span class="bold p02">Select Categorical and Continuous Variables</span>
                     <section class="container minW-0" style="min-height: 0;  flex: 1 0 auto; flex-shrink: 1;">
                     <div>
@@ -100,11 +102,10 @@
                         <div class="p02">
                             <button type="submit" class="bold" id="columns">Filter Data</button>
                         </div>
-                    </div>
-                
-            
+                </div>
                 <hr>
-
+                {% endif %}
+                </div>
             </div>
 
     </div>

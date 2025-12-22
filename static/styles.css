@@ -21,10 +21,10 @@ main {
 }
 
 .top-bar {
-    display:flex; 
-    flex-grow: 0; 
-    position: sticky; 
-    top: 0; 
+    display:flex;
+    flex-grow: 0;
+    position: sticky;
+    top: 0;
     z-index: 100;
     flex-direction: column;
     flex-wrap: wrap;
@@ -95,13 +95,13 @@ a:hover {
             justify-content: center;
             margin: 20px;
         }
-        
+
 .container > div {
         display: flex;
         flex-direction: column;
         gap: 10px;
 }
-        
+
 select {
         width: 350px;
         height: 250px;
@@ -110,12 +110,12 @@ select {
         padding: 5px;
         font-size: 14px;
 }
-        
+
 select option {
     padding: 5px;
     cursor: pointer;
 }
-        
+
 select option:hover {
     background-color: #e3f2fd;
 }
@@ -207,5 +207,13 @@ button[type="submit"] {
     margin-top: 25px;
     align-self: center;
     justify-content: center;
+}
+
+.side-borders{
+    border-left: 5px solid black;
+    border-right: 5px solid black;
+    padding: 30px;
+    margin-top: 10px;
+    margin-left: 20px;
 }
 
