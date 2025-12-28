@@ -28,7 +28,6 @@ import config
 # Configure application
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=config.CLEANUP_INTERVAL)
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = False # Set True if using HTTPS 
 
@@ -71,9 +70,6 @@ def cleanup_expired_tables():
             # If last_active is malformed, clear session
             session.clear()
             return
-    
-    # Make session permanent so it uses the PERMANENT_SESSION_LIFETIME config
-    session.permanent = True
 
     global last_cleanup_time
     now = datetime.now(timezone.utc).isoformat()
@@ -88,7 +84,6 @@ def cleanup_expired_tables():
         return
     
     try: 
-            
         last_cleanup_time = now
         
         try:
@@ -169,7 +164,7 @@ def file():
         if file_size == 0:
             return render_template("start.html", error="File is empty")
         
-         # If user already had a table, delete it first
+         # If session already had a table, delete it first
         old_table = session.get("table_name")
         drop_table(old_table)
         
@@ -263,7 +258,6 @@ def file():
                 error=f"Database error: {str(e)}")
 
         # Store metadata in the session
-        session.permanent = True
         session["table_name"] = table_name
         session["last_active"] = datetime.now(timezone.utc).isoformat()
 
@@ -326,7 +320,6 @@ def cols():
     table_timestamp(filtered_table)
     
     # Store filtered table and column info in session
-    session.permanent = True
     session["filtered_table"] = filtered_table
     session["categorical_cols"] = categorical
     session["continuous_cols"] = continuous
